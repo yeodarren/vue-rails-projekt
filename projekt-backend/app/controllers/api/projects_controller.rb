@@ -1,0 +1,56 @@
+module Api
+  class ProjectsController < ApplicationController
+    before_action :set_project, only: [:show, :update, :destroy]
+  
+    # GET /projects
+    def index
+      @projects = Project.all
+  
+      render json: @projects
+    end
+  
+    # GET /projects/1
+    def show
+      render json: {project: @project, user:@project.user, team: @project.team}
+    end
+  
+    # POST /projects
+    def create
+      @project = Project.new(project_params)
+      @project.user = @user
+  
+      if @project.save
+        render json: {project: @project, user: @project.user, team: @project.team}
+        # , status: :created, location: @project
+      else
+        render json: @project.errors, status: :unprocessable_entity
+      end
+    end
+  
+    # PATCH/PUT /projects/1
+    def update
+      if @project.update(project_params)
+        render json: @project
+      else
+        render json: @project.errors, status: :unprocessable_entity
+      end
+    end
+  
+    # DELETE /projects/1
+    def destroy
+      @project.destroy
+    end
+  
+    private
+      # Use callbacks to share common setup or constraints between actions.
+      def set_project
+        @project = Project.find(params[:id])
+      end
+  
+      # Only allow a list of trusted parameters through.
+      def project_params
+        params.permit(:title, :description, :team_id, :image_url)
+        # .require(:project)
+      end
+  end
+end  
